@@ -1,0 +1,25 @@
+{
+	"name": "scion/curl",
+	"type": "library",
+	"description": "PHP5 object-oriented wrapper of the PHP cURL extension",
+	"homepage": "https://github.com/Scion-Framework/Curl",
+	"keywords": [
+		"curl"
+	],
+	"license": "LGPL-3.0+",
+	"authors": [
+		{
+			"name": "David Sanchez",
+			"email": "david38sanchez@gmail.com"
+		}
+	],
+	"require": {
+		"php": ">=5.6",
+		"ext-curl": "*"
+	},
+	"autoload": {
+		"psr-4": {
+			"Scion\\Curl\\": "./"
+		}
+	}
+}
