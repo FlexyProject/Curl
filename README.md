@@ -3,7 +3,7 @@ This is a PHP7 object-oriented wrapper of the [cURL extension](http://php.net/cu
 
 ## Installation
 ```shell
-composer require scion/curl
+composer require flexyproject/curl
 ```
 
 ## Usage
