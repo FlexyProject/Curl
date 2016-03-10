@@ -1,5 +1,5 @@
-# PHP5 Curl Client
-This is a PHP5.6 object-oriented wrapper of the [cURL extension](http://php.net/curl).
+# A PHP7 Curl Client
+This is a PHP7 object-oriented wrapper of the [cURL extension](http://php.net/curl).
 
 ## Installation
 ```shell
@@ -10,5 +10,5 @@ composer require scion/curl
 ### Initialization
 ```php
 require 'vendor/autoload.php';
-$curl = new \Scion\Curl\Client();
+$curl = new \FlexyProject\Curl\Client();
 ```
