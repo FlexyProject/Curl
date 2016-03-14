@@ -10,5 +10,32 @@ composer require flexyproject/curl
 ### Initialization
 ```php
 require 'vendor/autoload.php';
-$curl = new \FlexyProject\Curl\Client();
+
+use \FlexyProject\Curl\Client;
+
+// Create Client object
+$curl = new Client();
+
+// Set Url
+$curl->setUrl('https://api.github.com/user');
+
+// Set options (here authentication options)
+$curl->setOption([
+	CURLOPT_HTTPAUTH => CURLAUTH_BASIC,
+	CURLOPT_USERPWD  => sprintf('%s:%s', 'user', 'pass')
+]);
+
+// Success callback
+$curl->success(function (Client $instance) {
+	$instance->getHeaders(); // Get headers info
+	$instance->getResponse(); // Get response body
+});
+// Error callback
+$curl->error(function (Client $instance) {
+	$instance->getHeaders(); // Get headers info
+	$instance->getResponse(); // Get response body
+});
+
+// Perform request
+$curl->perform();
 ```
