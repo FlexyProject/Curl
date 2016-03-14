@@ -11,13 +11,12 @@ class Client {
 
 	/** Properties */
 	protected $curl;
-	protected $headers          = [];
-	protected $successCallback  = null;
-	protected $errorCallback    = null;
-	protected $completeCallback = null;
-	protected $url              = '';
-	protected $response         = null;
-	protected $options          = [];
+	protected $headers         = [];
+	protected $successCallback = null;
+	protected $errorCallback   = null;
+	protected $url             = '';
+	protected $response        = null;
+	protected $options         = [];
 
 	/**
 	 * Main constructor,
@@ -110,6 +109,10 @@ class Client {
 			$this->options[$option] = $value;
 		}
 
+		if (isset($this->getOptions()[CURLOPT_URL]) && !empty($this->getOptions()[CURLOPT_URL])) {
+			$this->setUrl($this->getOptions()[CURLOPT_URL]);
+		}
+
 		return curl_setopt_array($this->curl, $this->options);
 	}
 
@@ -155,21 +158,27 @@ class Client {
 
 	/**
 	 * Perform a cURL session
-	 * @return mixed
+	 * @return Client
 	 */
-	public function perform() {
-		$this->setResponse(curl_exec($this->getCurl()));
+	public function perform(): Client {
+		if (!empty($this->getUrl())){
+			$this->setOption(CURLOPT_URL, $this->getUrl());
+		}
+
 		if ($this->getOptions()[CURLOPT_HEADER] === 1) {
 			$this->setResponse(substr($this->getResponse(), $this->getInfo(CURLINFO_HEADER_SIZE)));
 		}
 
-		$this->setUrl(isset($this->getOptions()[CURLOPT_URL]) ? $this->getOptions()[CURLOPT_URL] : null);
+		$this->setResponse(curl_exec($this->getCurl()));
 
-		$this->_call($this->completeCallback, $this);
-		$this->_call($this->successCallback, $this);
-		$this->_call($this->errorCallback, $this);
+		if (200 === $this->getInfo(CURLINFO_HTTP_CODE)) {
+			$this->_call($this->successCallback ?? function(Client $instance){}, $this);
+		}
+		else {
+			$this->_call($this->errorCallback ?? function(Client $instance){}, $this);
+		}
 
-		return $this->getResponse();
+		return $this;
 	}
 
 	/**
@@ -227,17 +236,6 @@ class Client {
 	 */
 	public function error(callable $callback): Client {
 		$this->errorCallback = $callback;
-
-		return $this;
-	}
-
-	/**
-	 * Complete callback method
-	 * @param callable $callback
-	 * @return Client
-	 */
-	public function complete(callable $callback): Client {
-		$this->completeCallback = $callback;
 
 		return $this;
 	}
