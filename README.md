@@ -7,7 +7,6 @@ composer require flexyproject/curl
 ```
 
 ## Usage
-### Initialization
 ```php
 require 'vendor/autoload.php';
 
