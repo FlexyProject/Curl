@@ -1,7 +1,7 @@
 {
 	"name": "flexyproject/curl",
 	"type": "library",
-	"description": "A PHP7 object-oriented wrapper of the cURL extension",
+	"description": "PHP5 object-oriented wrapper of the PHP cURL extension",
 	"homepage": "https://github.com/FlexyProject/Curl",
 	"keywords": [
 		"curl"
@@ -14,7 +14,7 @@
 		}
 	],
 	"require": {
-		"php": ">=7",
+		"php": ">=5.6",
 		"ext-curl": "*"
 	},
 	"autoload": {

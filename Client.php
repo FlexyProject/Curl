@@ -1,6 +1,5 @@
 <?php
 namespace FlexyProject\Curl;
-use RuntimeException;
 
 /**
  * This class is an object-oriented wrapper of the PHP cURL extension.
@@ -11,21 +10,22 @@ class Client {
 
 	/** Properties */
 	protected $curl;
-	protected $headers         = [];
-	protected $successCallback = null;
-	protected $errorCallback   = null;
-	protected $url             = '';
-	protected $response        = null;
-	protected $options         = [];
+	protected $headers          = [];
+	protected $successCallback  = null;
+	protected $errorCallback    = null;
+	protected $completeCallback = null;
+	protected $url              = null;
+	protected $response         = null;
+	protected $options          = [];
 
 	/**
 	 * Main constructor,
 	 * check cURL library is loaded
-	 * @throws RuntimeException
+	 * @throws \RuntimeException
 	 */
 	public function __construct() {
 		if (!extension_loaded('curl')) {
-			throw new RuntimeException('cURL library is not loaded');
+			throw new \RuntimeException('cURL library is not loaded');
 		}
 
 		$this->setCurl(curl_init());
@@ -49,18 +49,18 @@ class Client {
 
 	/**
 	 * Get url
-	 * @return string
+	 * @return null
 	 */
-	public function getUrl(): string {
+	public function getUrl() {
 		return $this->url;
 	}
 
 	/**
 	 * Set url
-	 * @param string $url
+	 * @param null $url
 	 * @return Client
 	 */
-	public function setUrl(string $url): Client {
+	public function setUrl($url) {
 		$this->url = $url;
 
 		return $this;
@@ -91,7 +91,7 @@ class Client {
 	 * @param mixed|null $value
 	 * @return bool
 	 */
-	public function setOption($option, $value = null): bool {
+	public function setOption($option, $value = null) {
 		if (is_array($option)) {
 			foreach ($option as $name => $value) {
 				if (is_null($value)) {
@@ -120,7 +120,7 @@ class Client {
 	 * Get options
 	 * @return array
 	 */
-	public function getOptions(): array {
+	public function getOptions() {
 		return $this->options;
 	}
 
@@ -139,10 +139,10 @@ class Client {
 
 	/**
 	 * Set curl
-	 * @param resource $curl
+	 * @param mixed $curl
 	 * @return Client
 	 */
-	public function setCurl($curl): Client {
+	public function setCurl($curl) {
 		$this->curl = $curl;
 
 		return $this;
@@ -158,9 +158,9 @@ class Client {
 
 	/**
 	 * Perform a cURL session
-	 * @return Client
+	 * @return mixed
 	 */
-	public function perform(): Client {
+	public function perform() {
 		if (!empty($this->getUrl())){
 			$this->setOption(CURLOPT_URL, $this->getUrl());
 		}
@@ -185,9 +185,8 @@ class Client {
 	 * Call callable function
 	 * @param callable $function
 	 * @param mixed    $params
-	 * @return void
 	 */
-	private function _call(callable $function, ...$params) {
+	private function _call($function, ...$params) {
 		if (is_callable($function)) {
 			call_user_func_array($function, $params);
 		}
@@ -197,9 +196,9 @@ class Client {
 	 * Set header
 	 * @param string|null $key
 	 * @param string|null $value
-	 * @return Client
+	 * @return $this
 	 */
-	public function setHeader($key, $value): Client {
+	public function setHeader($key, $value) {
 		if (null === $key) {
 			$this->headers[] = $value;
 		}
@@ -214,16 +213,16 @@ class Client {
 	 * Get headers
 	 * @return array
 	 */
-	public function getHeaders(): array {
+	public function getHeaders() {
 		return $this->headers;
 	}
 
 	/**
 	 * Success callback method
 	 * @param callable $callback
-	 * @return Client
+	 * @return $this
 	 */
-	public function success(callable $callback): Client {
+	public function success(callable $callback) {
 		$this->successCallback = $callback;
 
 		return $this;
@@ -232,10 +231,21 @@ class Client {
 	/**
 	 * Error callback method
 	 * @param callable $callback
-	 * @return Client
+	 * @return $this
 	 */
-	public function error(callable $callback): Client {
+	public function error(callable $callback) {
 		$this->errorCallback = $callback;
+
+		return $this;
+	}
+
+	/**
+	 * Complete callback method
+	 * @param callable $callback
+	 * @return $this
+	 */
+	public function complete(callable $callback) {
+		$this->completeCallback = $callback;
 
 		return $this;
 	}
@@ -249,7 +259,6 @@ class Client {
 
 	/**
 	 * Close a cURL session
-	 * @return void
 	 */
 	public function close() {
 		curl_close($this->curl);
