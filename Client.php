@@ -171,7 +171,15 @@ class Client {
 
 		$this->setResponse(curl_exec($this->getCurl()));
 
-		if (200 === $this->getInfo(CURLINFO_HTTP_CODE)) {
+		/**
+		 * Check returned HTTP code between 100 and 399.
+		 * See issue #1
+		 */
+		if (filter_var(
+			$this->getInfo(CURLINFO_HTTP_CODE),
+			FILTER_VALIDATE_INT,
+			['options' => ['min_range' => 100, 'max_range' => 399]])
+		) {
 			$this->_call($this->successCallback ?? function(Client $instance){}, $this);
 		}
 		else {
