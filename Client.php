@@ -123,9 +123,15 @@ class Client {
 	 */
 	public function addOptions(array $options): bool {
 		foreach ($options as $name => $value) {
-				if (isset($this->options[$name]) && is_array($this->options[$name])) {
-						$this->options[$name] = array_merge($this->options[$name], $value);
-				}
+			if (isset($this->options[$name]) && is_array($this->options[$name])) {
+				$this->options[$name] = array_merge($this->options[$name], $value);
+			}
+			else if (is_null($value)) {
+				unset($this->options[$name]);
+			}
+			else {
+				$this->options[$name] = $value;
+			}
 		}
 	
 		return curl_setopt_array($this->curl, $this->options);
