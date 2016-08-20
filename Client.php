@@ -115,6 +115,21 @@ class Client {
 
 		return curl_setopt_array($this->curl, $this->options);
 	}
+	
+	/**
+	 * Add cURL options without overwriting key/value
+	 * @param array $options
+	 * @return bool
+	 */
+	public function addOptions(array $options): bool {
+		foreach ($options as $name => $value) {
+				if (isset($this->options[$name]) && is_array($this->options[$name])) {
+						$this->options[$name] = array_merge($this->options[$name], $value);
+				}
+		}
+	
+		return curl_setopt_array($this->curl, $this->options);
+	}
 
 	/**
 	 * Get options
