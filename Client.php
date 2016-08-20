@@ -94,7 +94,10 @@ class Client {
 	public function setOption($option, $value = null): bool {
 		if (is_array($option)) {
 			foreach ($option as $name => $value) {
-				if (is_null($value)) {
+				if (isset($this->options[$name]) && is_array($this->options[$name])) {
+					$this->options[$name] = array_merge($this->options[$name], $value);
+				}
+				else if (is_null($value)) {
 					unset($this->options[$name]);
 				}
 				else {
@@ -116,46 +119,6 @@ class Client {
 		return curl_setopt_array($this->curl, $this->options);
 	}
 	
-	/**
-	 * Add cURL options without overwriting key/value
-	 * @param array $options
-	 * @return bool
-	 */
-	public function addOptions(array $options): bool {
-		foreach ($options as $name => $value) {
-			if (isset($this->options[$name]) && is_array($this->options[$name])) {
-				$this->options[$name] = array_merge($this->options[$name], $value);
-			}
-			else if (is_null($value)) {
-				unset($this->options[$name]);
-			}
-			else {
-				$this->options[$name] = $value;
-			}
-		}
-		
-		if (isset($this->getOptions()[CURLOPT_URL]) && !empty($this->getOptions()[CURLOPT_URL])) {
-			$this->setUrl($this->getOptions()[CURLOPT_URL]);
-		}
-	
-		return curl_setopt_array($this->curl, $this->options);
-	}
-
-        /**
-         * Add cURL options without overwriting key/value
-         * @param array $options
-         * @return bool
-         */
-        public function addOptions(array $options) {
-                foreach ($options as $name => $value) {
-                        if (isset($this->options[$name]) && is_array($this->options[$name])) {
-                                $this->options[$name] = array_merge($this->options[$name], $value);
-                        }
-                }
-
-                return curl_setopt_array($this->curl, $this->options);
-        }
-
 	/**
 	 * Get options
 	 * @return array
