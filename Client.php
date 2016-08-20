@@ -133,6 +133,10 @@ class Client {
 				$this->options[$name] = $value;
 			}
 		}
+		
+		if (isset($this->getOptions()[CURLOPT_URL]) && !empty($this->getOptions()[CURLOPT_URL])) {
+			$this->setUrl($this->getOptions()[CURLOPT_URL]);
+		}
 	
 		return curl_setopt_array($this->curl, $this->options);
 	}
